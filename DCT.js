@@ -22,5 +22,4 @@ function dct2d(input) {
 
   return output;
 }
-
 module.exports = { dct2d };
