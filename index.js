@@ -1,4 +1,4 @@
-const { readAudioFile } = require("./convertAudio.js");
+const { readAudioFile, runLengthIntoBinary } = require("./convertAudio.js");
 const { dct2d } = require("./DCT.js");
 const {
   createQuantizationTable,
@@ -17,5 +17,7 @@ const processAudioFile = async () => {
   const arrayOfZigzag2 = zigzagLooping(quantizedChannel2);
   const runLengthChannel1 = runLengthEncoding(arrayOfZigzag1);
   const runLengthChannel2 = runLengthEncoding(arrayOfZigzag2);
+  runLengthIntoBinary(runLengthChannel1, "binary channel1.bin");
+  runLengthIntoBinary(runLengthChannel2, "binary channel2.bin");
 };
 processAudioFile(); // call player

@@ -86,4 +86,16 @@ const readAudioFile = async function () {
     fs.createReadStream(filePath).pipe(reader);
   });
 };
-module.exports = { readAudioFile };
+const runLengthIntoBinary = function (array, fileName) {
+  const bufferData = Buffer.from(array);
+
+  fs.writeFile(fileName, bufferData, (err) => {
+    if (err) {
+      console.error("Error writing file:", err);
+    } else {
+      console.log("File written successfully");
+    }
+  });
+};
+
+module.exports = { readAudioFile, runLengthIntoBinary };

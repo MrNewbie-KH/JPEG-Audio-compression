@@ -38,26 +38,24 @@ const coeffAfterQuantization = function (table, coeff) {
 // create of run length encoding on zigzag
 const runLengthEncoding = function (array) {
   const finalString = [];
-  let element = -5000,
-    ctr = 1;
+  let element = -5000;
   for (let i = 0; i < array.length; i++) {
-    for (let j = 0; j < array.length; j++) {
-      let str = "";
-      for (let i = 0; i < array.length; i++) {
-        if (array[i] === element) {
-          element = array[i];
-          ctr++;
-        } else {
-          str += `${array[i]}.${ctr},`;
-          element = array[i];
-          ctr = 1;
-        }
+    ctr = 1;
+    let str = [];
+    for (let j = 0; j < 64; j++) {
+      if (array[i][j] === element) {
+        element = array[i][j];
+        ctr++;
+      } else {
+        str.push(`${array[i][j]}.${ctr}`);
+        element = array[i][j];
+        ctr = 1;
       }
-      if (ctr !== 1) {
-        str += `${element}.${ctr}`;
-      }
-      finalString.push(str);
     }
+    if (ctr !== 1) {
+      str += `${element}.${ctr}`;
+    }
+    finalString.push(str);
   }
 
   return finalString;
