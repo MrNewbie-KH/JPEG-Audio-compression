@@ -1,6 +1,6 @@
 const fs = require("fs");
 const wav = require("wav");
-const filePath = "after.wav";
+const filePath = "before.wav";
 const outputFile = "output.bin";
 const reader = new wav.Reader();
 

@@ -43,6 +43,6 @@ const processAudioFile = async () => {
   const channel1=idct2d(channel1Prep)
   const channel2=idct2d(channel2Prep)
   const combinedArray =combineChannels(channel1,channel2)
-    await writeWavFileAsync(combinedArray, "before.wav");
+    await writeWavFileAsync(combinedArray, "after.wav");
 };
 processAudioFile();
