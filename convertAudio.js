@@ -25,6 +25,7 @@ const matrixConverter = function (width, height, arr) {
   }
   return matrix;
 };
+
 // split into two 2d channels
 const splitChannels = function (arr) {
   const channels = 2;

@@ -11,7 +11,7 @@ const createQuantizationTable = function () {
   return arr;
 };
 // new coeff numbers after quantization
-const coeffAfterQuantization = function (table, coeff) {
+const coeffAfterQuantization = function (table, coeff,operation) {
   const arr = [];
   for (let u = 0; u < 296; u++) {
     const block = [];
@@ -20,7 +20,12 @@ const coeffAfterQuantization = function (table, coeff) {
       for (let i = u; i < u + 8; i++) {
         let row = [];
         for (let j = v; j < v + 8; j++) {
-          const equal = Math.floor(coeff[i][j] / table[i % 8][j % 8]);
+          let equal;
+          if(operation==="/" )
+            equal = Math.floor(coeff[i][j] / table[i % 8][j % 8]) ;
+          else
+            equal = Math.floor(coeff[i][j] * table[i % 8][j % 8]) ;
+          
           row.push(equal); //1
         }
         column.push(row); //8
@@ -81,9 +86,36 @@ const runLengthDecoding = function (array) {
 
   return answerArray;
 };
+const prepareArray = function(arr){
+
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = 0; j < arr[i].length; j++) {
+        for (let k = 0; k < arr[i][j].length; k++) {
+          for (let l = 0; l < arr[i][j][k].length; l++) {
+            result.push(arr[i][j][k][l]);
+          }
+        }
+      }
+    }
+    const limit = Math.floor(Math.sqrt(result.length));
+    const finalArr =[];
+    let temp =[];
+    for (let i = 0; i < result.length; i++) {
+        if(i%limit===0&&i!==0)
+        {
+          finalArr.push(temp)
+          temp=[];
+        }
+        temp.push(result[i])
+    }
+    return finalArr;
+}
+
 module.exports = {
   createQuantizationTable,
   coeffAfterQuantization,
   runLengthEncoding,
   runLengthDecoding,
+  prepareArray
 };
