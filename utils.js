@@ -78,6 +78,7 @@ const runLengthDecoding = function (array) {
     }
     answerArray.push(arrayToBeZigzaged);
   }
+
   return answerArray;
 };
 module.exports = {

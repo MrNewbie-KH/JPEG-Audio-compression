@@ -8,7 +8,7 @@ const {
   runLengthEncoding,
   runLengthDecoding,
 } = require("./utils.js");
-const { zigzagLooping } = require("./zigzag.js");
+const { zigzagLooping, inverseZigzagLooping } = require("./zigzag.js");
 const processAudioFile = async () => {
   const { channelOne2D, channelTwo2D } = await readAudioFile();
   const coeffChannel1 = dct2d(channelOne2D);
@@ -25,7 +25,14 @@ const processAudioFile = async () => {
   // Until here encoding done
   // Start decoding to go back to
 
-  const channel1ToInverseZigzag = runLengthDecoding(runLengthChannel1);
-  const channel2ToInverseZigzag = runLengthDecoding(runLengthChannel2);
+  const channel1FromRLEToInverseZigzag = runLengthDecoding(runLengthChannel1);
+  const channel2FromRLEToInverseZigzag = runLengthDecoding(runLengthChannel2);
+  const channel1FromInverseZizagToInvereQ = inverseZigzagLooping(
+    channel1FromRLEToInverseZigzag
+  );
+  const channel2FromInverseZizagToInvereQ = inverseZigzagLooping(
+  channel2FromRLEToInverseZigzag
+  );
+
 };
 processAudioFile();
