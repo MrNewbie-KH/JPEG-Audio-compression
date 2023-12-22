@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const { readAudioFile, runLengthIntoBinary } = require("./convertAudio.js");
+const { readAudioFile, runLengthIntoBinary,combineChannels,writeWavFileAsync } = require("./convertAudio.js");
 const { dct2d ,idct2d} = require("./DCT.js");
 const {
   createQuantizationTable,
@@ -42,9 +42,7 @@ const processAudioFile = async () => {
   const channel2Prep=prepareArray(coeff2)
   const channel1=idct2d(channel1Prep)
   const channel2=idct2d(channel2Prep)
-  console.log(channel1[0]);
-  console.log(channelOne2D[0]);
-
-
+  const combinedArray =combineChannels(channel1,channel2)
+    await writeWavFileAsync(combinedArray, "before.wav");
 };
 processAudioFile();

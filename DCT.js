@@ -41,6 +41,7 @@ function idct2d(input) {
       }
       sum *= ((u === 0 ? Math.sqrt(1 / M) : Math.sqrt(2 / M)) * (v === 0 ? Math.sqrt(1 / N) : Math.sqrt(2 / N)));
       sum = Math.floor(sum)
+      sum+=50
       row.push(sum);
     }
     output.push(row);

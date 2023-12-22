@@ -1,6 +1,6 @@
 const fs = require("fs");
 const wav = require("wav");
-const filePath = "before.wav";
+const filePath = "after.wav";
 const outputFile = "output.bin";
 const reader = new wav.Reader();
 
@@ -40,6 +40,17 @@ const splitChannels = function (arr) {
   }
   return { leftChannel, rightChannel };
 };
+const combineChannels = function(ch1,ch2){
+  ch1=ch1.flat(Infinity);
+  ch2=ch2.flat(Infinity);
+  const combined = [];
+  for(let i=0;i<ch1.length;i++)
+  {
+    combined.push(ch1[i])
+    combined.push(ch2[i])
+  }
+  return combined;
+}
 // Read audio file
 const readAudioFile = async function () {
   return new Promise((resolve, reject) => {
@@ -100,4 +111,28 @@ const runLengthIntoBinary = function (array, fileName) {
   });
 };
 
-module.exports = { readAudioFile, runLengthIntoBinary };
+function writeWavFileAsync(combined, filePath) {
+  return new Promise((resolve, reject) => {
+    const buffer = Buffer.from(combined);
+    const writer = new wav.Writer({
+      channels: 2,
+      sampleRate: 48000,
+      bitDepth: 16,
+      floatingPoint: false,
+    });
+
+    const outputStream = fs.createWriteStream(filePath);
+    outputStream.on('finish', () => {
+      resolve();
+    });
+    outputStream.on('error', (err) => {
+      reject(err);
+    });
+
+    writer.pipe(outputStream);
+    writer.end(buffer);
+  });
+}
+
+
+module.exports = { readAudioFile, runLengthIntoBinary,combineChannels,writeWavFileAsync };
