@@ -27,6 +27,7 @@ const processAudioFile = async () => {
 
   const channel1FromRLEToInverseZigzag = runLengthDecoding(runLengthChannel1);
   const channel2FromRLEToInverseZigzag = runLengthDecoding(runLengthChannel2);
+
   const channel1FromInverseZizagToInvereQ = inverseZigzagLooping(
     channel1FromRLEToInverseZigzag
   );

@@ -1,41 +1,23 @@
 // Function to perform zigzag scanning on a 2D array
 function zigzagScan(window) {
-  const rows = window.length;
-  const cols = window[0].length;
-  const result = new Array(rows * cols);
-  let row = 0;
-  let col = 0;
-  let index = 0;
-  let direction = "up";
-
-  while (index < rows * cols) {
-    result[index++] = window[row][col];
-
-    if (direction === "up") {
-      if (col === cols - 1) {
-        row++;
-        direction = "down";
-      } else if (row === 0) {
-        col++;
-        direction = "down";
-      } else {
-        row--;
-        col++;
-      }
-    } else {
-      if (row === rows - 1) {
-        col++;
-        direction = "up";
-      } else if (col === 0) {
-        row++;
-        direction = "up";
-      } else {
-        row++;
-        col--;
-      }
-    }
+  const zigzag = {
+    0: "00", 1: "01", 2: "10", 3: "20", 4: "11", 5: "02", 6: "03", 7: "12",
+    8: "21", 9: "30", 10: "40", 11: "31", 12: "22", 13: "13", 14: "04", 15: "05",
+    16: "14", 17: "23", 18: "32", 19: "41", 20: "50", 21: "60", 22: "51", 23: "42",
+    24: "33", 25: "24", 26: "15", 27: "06", 28: "07", 29: "16", 30: "25", 31: "34",
+    32: "43", 33: "52", 34: "61", 35: "70", 36: "71", 37: "62", 38: "53", 39: "44",
+    40: "35", 41: "26", 42: "17", 43: "27", 44: "36", 45: "45", 46: "54", 47: "63",
+    48: "72", 49: "73", 50: "64", 51: "55", 52: "46", 53: "37", 54: "47", 55: "56",
+    56: "65", 57: "74", 58: "75", 59: "66", 60: "57", 61: "67", 62: "76", 63: "77"
+  };
+  let result =[]
+  let index =0;
+  for(let i=0;i<window.length;i++){
+  for(let j=0;j<window.length;j++){
+    result[index]=window[zigzag[index][0]][zigzag[index][1]]
+    index++;
   }
-
+}
   return result;
 }
 function inverseZigzag(zigzagArray) {
@@ -84,28 +66,16 @@ const zigzagLooping = function (arr) {
   }
   return newArray;
 };
-const inverseZigzagLooping = function (arr) {
+const inverseZigzagLooping = function (arr) {  
   const newArray = [];
+  for(let j=0;j<296;j++){
   let tuple = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (i % 64 === 0 && i !== 0) {
-      newArray.push(tuple);
-      tuple = [];
-    }
+  for (let i = 0; i < 296; i++) {
     tuple.push(inverseZigzag(arr[i]));
-    if (i === 0) console.log(inverseZigzag(arr[i]));
   }
-  // // new array is array of places each is array of arrays  [  [  [],[],[]  ] ,[] ]
-  // const finalArray = [];
-  // let tempArray = [];
-  // for (let i = 0; i < newArray.length; i++) {
-  //   if (tempArray.length % 64 === 0 && i !== 0) {
-  //     finalArray.push(tempArray);
-  //     tempArray = [];
-  //   }
-  //   tempArray.push(newArray[i]);
-  // }
-  // return finalArray;
+  newArray.push(tuple)
+}
+
   return newArray;
 };
 
