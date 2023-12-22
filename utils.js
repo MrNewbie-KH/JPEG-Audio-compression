@@ -10,7 +10,6 @@ const createQuantizationTable = function () {
   }
   return arr;
 };
-
 // new coeff numbers after quantization
 const coeffAfterQuantization = function (table, coeff) {
   const arr = [];
@@ -53,16 +52,37 @@ const runLengthEncoding = function (array) {
       }
     }
     if (ctr !== 1) {
-      str += `${element}.${ctr}`;
+      str += `${element}.${ctr},`;
     }
+    str += ";";
     finalString.push(str);
   }
 
   return finalString;
 };
-
+const runLengthDecoding = function (array) {
+  const answerArray = [];
+  const decodedArray = array.map((tuple) => tuple.split(","));
+  for (let i = 0; i < decodedArray.length; i++) {
+    const arrayToBeZigzaged = [];
+    for (let j = 0; j < decodedArray[i].length; j++) {
+      const ele = decodedArray[i][j];
+      let [val, repeat] = ele.split(".");
+      if (j === decodedArray[i].length - 1) {
+        repeat = parseInt(repeat);
+      }
+      while (repeat > 0) {
+        arrayToBeZigzaged.push(+val);
+        repeat--;
+      }
+    }
+    answerArray.push(arrayToBeZigzaged);
+  }
+  return answerArray;
+};
 module.exports = {
   createQuantizationTable,
   coeffAfterQuantization,
   runLengthEncoding,
+  runLengthDecoding,
 };

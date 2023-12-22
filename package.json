@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/MrNewbie-KH/JPEG-Audio-compression#readme",
   "dependencies": {
+    "jbinary": "^2.1.5",
     "mathjs": "^12.2.1",
     "wav": "^1.0.2"
   }

@@ -86,6 +86,7 @@ const readAudioFile = async function () {
     fs.createReadStream(filePath).pipe(reader);
   });
 };
+// converting to run length encoding
 const runLengthIntoBinary = function (array, fileName) {
   const bufferData = Buffer.from(array);
 
