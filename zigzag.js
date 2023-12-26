@@ -10,7 +10,7 @@ function zigzagScan(window) {
     48: "72", 49: "73", 50: "64", 51: "55", 52: "46", 53: "37", 54: "47", 55: "56",
     56: "65", 57: "74", 58: "75", 59: "66", 60: "57", 61: "67", 62: "76", 63: "77"
   };
-  let result =[]
+  let result =Array(64).fill(0)
   let index =0;
   for(let i=0;i<window.length;i++){
   for(let j=0;j<window.length;j++){
@@ -58,24 +58,41 @@ function inverseZigzag(zigzagArray) {
   return result;
 }
 const zigzagLooping = function (arr) {
+  const width= arr.length
+  const height= arr[0].length
   const newArray = [];
-  for (let i = 0; i < arr.length; i++) {
-    for (let j = 0; j < arr.length; j++) {
-      newArray.push(zigzagScan(arr[i][j]));
+  for (let i = 0; i < width; i+=8) {
+    for (let j = 0; j < height; j+=8) {
+      const block = new Array(8).fill(0).map(() => new Array(8).fill(0));
+      for(let ii=0;ii<8;ii++)
+      {
+        for(let jj=0;jj<8;jj++){
+          block[ii][jj]=arr[i+ii][j+jj];
+        }
+      }
+      newArray.push(zigzagScan(block));
     }
   }
+
   return newArray;
 };
-const inverseZigzagLooping = function (arr) {  
-  const newArray = [];
-  for(let j=0;j<296;j++){
-  let tuple = [];
-  for (let i = 0; i < 296; i++) {
-    tuple.push(inverseZigzag(arr[i]));
+const inverseZigzagLooping = function (arr,w,h) {  
+  const newArray = Array(w);
+  for(let i=0;i<newArray.length;i++){
+    newArray[i]=Array(h).fill(0);
   }
-  newArray.push(tuple)
-}
-
+  let ctr =0;
+  for(let i=0;i<w;i+=8){
+    for(let j=0;j<h;j+=8){
+      const toInverse = inverseZigzag(arr[ctr]);
+      ctr++;
+      for(let ii =0;ii<8;ii++){
+        for(let jj=0;jj<8;jj++){
+          newArray[ii+i][jj+j]=toInverse[ii][jj];
+        }
+      }
+    }
+  }
   return newArray;
 };
 

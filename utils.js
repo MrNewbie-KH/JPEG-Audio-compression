@@ -1,115 +1,95 @@
 // create quantization table
 const createQuantizationTable = function () {
-  const arr = [];
-  for (let i = 0; i < 8; i++) {
-    const innerArray = [];
-    for (let j = 0; j < 8; j++) {
-      innerArray.push(1 + (1 + i + j) * 9);
-    }
-    arr.push(innerArray);
-  }
+  const arr = [
+    [1, 1, 1, 1, 2, 4, 1, 1],
+    [1, 1, 1, 1, 2, 5, 1, 5],
+    [1, 1, 1, 2, 4, 5, 9, 6],
+    [1, 1, 2, 2, 5, 8, 1, 2],
+    [1, 2, 3, 5, 6, 19, 1, 7],
+    [2, 3, 5, 6, 8, 14, 1, 2],
+    [4, 6, 7, 8, 13,21, 1, 1],
+    [7, 9, 9, 9, 12,1, 1, 9]
+]
   return arr;
 };
 // new coeff numbers after quantization
 const coeffAfterQuantization = function (table, coeff,operation) {
-  const arr = [];
-  for (let u = 0; u < 296; u++) {
-    const block = [];
-    for (let v = 0; v < 296; v++) {
-      const column = [];
-      for (let i = u; i < u + 8; i++) {
-        let row = [];
-        for (let j = v; j < v + 8; j++) {
+  const width=coeff[0].length;
+  const height=coeff.length;
+  let arr = new Array(width);
+  for (let i = 0; i < height; i++) {
+    arr[i] = new Array(width).fill(0); 
+  }
+  for (let u = 0; u < width; u+=8) {
+    for (let v = 0; v < height; v+=8) {
+      for (let i = 0; i <  8; i++) {
+        for (let j = 0; j < 8; j++) {
+          if (u + i < coeff.length && v + j < coeff[0].length && i < table.length && j < table[0].length) {
           let equal;
           if(operation==="/" )
-            equal = Math.floor(coeff[i][j] / table[i % 8][j % 8]) ;
+            equal = Math.floor(coeff[i+u][j+v] / table[i][j]) ;
           else
-            equal = Math.floor(coeff[i][j] * table[i % 8][j % 8]) ;
-          
-          row.push(equal); //1
+            equal = Math.floor(coeff[i+u][j+v] * table[i][j]) ;
+          arr[i+u][j+v]=equal;
         }
-        column.push(row); //8
       }
-      block.push(column); //64
+      }
     }
-    arr.push(block);
   }
-  // console.log(arr.length); //296
-  // console.log(arr[0].length); //296
-  // console.log(arr[295][296]); //64
   return arr;
 };
 // create of run length encoding on zigzag
 const runLengthEncoding = function (array) {
+  // array here is an array of arrays
   const finalString = [];
-  let element = -5000;
   for (let i = 0; i < array.length; i++) {
-    ctr = 1;
-    let str = [];
-    for (let j = 0; j < 64; j++) {
+    let element = array[i][0];
+    let ctr = 1; 
+    let str = "";
+
+    for (let j = 1; j < array[i].length; j++) {
       if (array[i][j] === element) {
-        element = array[i][j];
         ctr++;
       } else {
-        str.push(`${array[i][j]}.${ctr}`);
+        str += `${element}.${ctr},`;
         element = array[i][j];
         ctr = 1;
       }
     }
-    if (ctr !== 1) {
-      str += `${element}.${ctr},`;
-    }
+    str += `${element}.${ctr},`;
     str += ";";
     finalString.push(str);
   }
-
   return finalString;
 };
+
 const runLengthDecoding = function (array) {
+  // array here is array of strings
   const answerArray = [];
-  const decodedArray = array.map((tuple) => tuple.split(","));
-  for (let i = 0; i < decodedArray.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     const arrayToBeZigzaged = [];
-    for (let j = 0; j < decodedArray[i].length; j++) {
-      const ele = decodedArray[i][j];
-      let [val, repeat] = ele.split(".");
-      if (j === decodedArray[i].length - 1) {
-        repeat = parseInt(repeat);
-      }
-      while (repeat > 0) {
-        arrayToBeZigzaged.push(+val);
-        repeat--;
+    const decodedArray = array[i].split(",");
+    for (let j = 0; j < decodedArray.length-1; j++) {
+      const ele=decodedArray[j].split(".");
+      ele[0]=Number(ele[0]);
+      ele[1]=Number(ele[1]);
+      while(ele[1]>0){
+        arrayToBeZigzaged.push(ele[0])
+        ele[1]--;
       }
     }
     answerArray.push(arrayToBeZigzaged);
   }
-
   return answerArray;
 };
-const prepareArray = function(arr){
 
-    const result = [];
-    for (let i = 0; i < arr.length; i++) {
-      for (let j = 0; j < arr[i].length; j++) {
-        for (let k = 0; k < arr[i][j].length; k++) {
-          for (let l = 0; l < arr[i][j][k].length; l++) {
-            result.push(arr[i][j][k][l]);
-          }
-        }
-      }
-    }
-    const limit = Math.floor(Math.sqrt(result.length));
-    const finalArr =[];
-    let temp =[];
-    for (let i = 0; i < result.length; i++) {
-        if(i%limit===0&&i!==0)
-        {
-          finalArr.push(temp)
-          temp=[];
-        }
-        temp.push(result[i])
-    }
-    return finalArr;
+const clipper = function (num,arr){
+  let newArr = [];
+  for(let i=0;i<num;i++)
+  {
+    newArr.push(arr[i]);
+  }
+  return newArr;
 }
 
 module.exports = {
@@ -117,5 +97,5 @@ module.exports = {
   coeffAfterQuantization,
   runLengthEncoding,
   runLengthDecoding,
-  prepareArray
+  clipper
 };

@@ -3,27 +3,39 @@ const wav = require("wav");
 const filePath = "before.wav";
 const outputFile = "output.bin";
 const reader = new wav.Reader();
+// create two d zeros array
+function create2DArrayZero(width, height) {
+  let arr = new Array(height);
+  for (let i = 0; i < height; i++) {
+    arr[i] = new Array(width).fill(0); 
+  }
+  return arr;
+}
 
-// paddzeros to the arrayand apply shifting
-const paddZeros = function (array) {
-  const toAdd = Math.floor(Math.sqrt(array.length)) + 8;
-  while (array.length < toAdd * toAdd) {
-    array.push(0);
-  }
-  for (let i = 0; i < array.length; i++) array[i] -= 128;
-  return array;
-};
 // create 2D array
-const matrixConverter = function (width, height, arr) {
-  const matrix = [];
-  for (let i = 0; i < width; i++) {
-    const innerArray = [];
-    for (let j = 0; j < height; j++) {
-      innerArray.push(arr[i * width + j]);
+const matrixConverter = function (arr) {
+  let leng = arr.length;
+  let h,w ;
+  for(let i=Math.floor(Math.sqrt(leng));i>0;i--)
+  {
+    if(leng % i === 0 ){
+      w = i ;
+      h = leng/i;
+      break;
     }
-    matrix.push(innerArray);
   }
-  return matrix;
+  let heightAfterPadding = Math.ceil((h/8))*8 
+  let widthAfterPadding=Math.ceil((w/8))*8 ;
+  let zerosArray = create2DArrayZero(widthAfterPadding,heightAfterPadding);
+  
+ let ctr = 0;
+  for (let i = 0; i < h; i++) {
+    for (let j = 0; j < w; j++) {
+      zerosArray[i][j]=arr[ctr];
+      ctr++;
+    }
+  }
+  return {zerosArray,h,w};
 };
 
 // split into two 2d channels
@@ -42,6 +54,7 @@ const splitChannels = function (arr) {
 };
 const combineChannels = function(ch1,ch2){
   ch1=ch1.flat(Infinity);
+  
   ch2=ch2.flat(Infinity);
   const combined = [];
   for(let i=0;i<ch1.length;i++)
@@ -79,13 +92,9 @@ const readAudioFile = async function () {
 
         // Pad and convert to 2D arrays
         const channelOne2D = matrixConverter(
-          2368,
-          2368,
           paddZeros(leftChannel)
         );
         const channelTwo2D = matrixConverter(
-          2368,
-          2368,
           paddZeros(rightChannel)
         );
 
@@ -115,10 +124,15 @@ function writeWavFileAsync(combined, filePath) {
   return new Promise((resolve, reject) => {
     const buffer = Buffer.from(combined);
     const writer = new wav.Writer({
-      channels: 2,
-      sampleRate: 48000,
-      bitDepth: 16,
-      floatingPoint: false,
+      audioFormat: 1,
+  endianness: 'LE',
+  channels: 2,
+  sampleRate: 44100,
+  byteRate: 176400,
+  blockAlign: 4,
+  bitDepth: 16,
+  signed: true
+
     });
 
     const outputStream = fs.createWriteStream(filePath);
@@ -135,4 +149,4 @@ function writeWavFileAsync(combined, filePath) {
 }
 
 
-module.exports = { readAudioFile, runLengthIntoBinary,combineChannels,writeWavFileAsync };
+module.exports = { readAudioFile,matrixConverter, runLengthIntoBinary,combineChannels,writeWavFileAsync };
