@@ -19,13 +19,13 @@ const matrixConverter = function (arr) {
       break;
     }
   }
-  let heightAfterPadding = Math.ceil((h/8))*8 
-  let widthAfterPadding=Math.ceil((w/8))*8 ;
+  let heightAfterPadding = Math.round((h/8))*8 
+  let widthAfterPadding=Math.round((w/8))*8 ;
   let zerosArray = create2DArrayZero(widthAfterPadding,heightAfterPadding);
   
  let ctr = 0;
-  for (let i = 0; i < h; i++) {
-    for (let j = 0; j < w; j++) {
+  for (let i = 0; i < w; i++) {
+    for (let j = 0; j < h; j++) {
       zerosArray[i][j]=arr[ctr];
       ctr++;
     }

@@ -83,7 +83,7 @@ const runLengthDecoding = function (array) {
   return answerArray;
 };
 
-const clipper = function (arr,width,height){
+const clipper = function (arr,height,width){
   let newArr = [];
   for(let i=0;i<width;i++){
   for(let j=0;j<height;j++)
