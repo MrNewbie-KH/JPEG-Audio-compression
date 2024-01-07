@@ -11,14 +11,16 @@ const {
 } = require("./utils.js");
 const { zigzagLooping, inverseZigzagLooping } = require("./zigzag.js");
 // =====================================================================
-// code starting
+const inputFileName = "input_stereo.wav"
+const outputFileName= "output.wav"
+// =====================================================================
 const processAudioFile = async () => {
+  // code starting
   // Read the input WAV file
-const inputBuffer = fs.readFileSync('input.wav');
-
+const inputBuffer = fs.readFileSync(inputFileName);
 const inputWave = new wavefile.WaveFile(inputBuffer);
 const {sampleRate,numChannels,bitsPerSample}=inputWave.fmt;
-let fSociety=[]
+let output1Darray=[]
 if(numChannels===2){
 const twoChannels = inputWave.getSamples(false);
 const channel1Simple = []
@@ -56,7 +58,7 @@ const channel2FromInverseZizagToInvereQ = inverseZigzagLooping(
   const channel2=idct2d(coeff2)
   const final1 = clipper(channel1,ch1H,ch1W)
   const final2 = clipper(channel2,ch2H,ch2W)
-  fSociety=combineChannels(final1,final2)
+  output1Darray=combineChannels(final1,final2)
 }
 else{
   const twoChannels = inputWave.getSamples(false);
@@ -82,11 +84,11 @@ const channel1FromInverseZizagToInvereQ = inverseZigzagLooping(
   const final1 = clipper(channel1,ch1H,ch1W)
   for(let i=0;i<final1.length;i++)
   {
-    fSociety.push(Math.floor(final1[i]))
+    output1Darray.push(Math.floor(final1[i]))
   } 
 }
     const wavOut = new wavefile.WaveFile();
-wavOut.fromScratch(numChannels, sampleRate, `${bitsPerSample}`, [fSociety]);
-fs.writeFileSync('output.wav', wavOut.toBuffer());
+wavOut.fromScratch(numChannels, sampleRate, `${bitsPerSample}`, [output1Darray]);
+fs.writeFileSync(outputFileName, wavOut.toBuffer());
 };
 processAudioFile();
